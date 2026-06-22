@@ -26,9 +26,24 @@ git clone https://github.com/gitroomhq/postiz-docker-compose
 
 Then run:
 ```
-docker compose up
+docker compose --env-file stack.env up
 ```
 
 Wait for it to load:
 
 Open your website on https://localhost:4007
+
+## Deploy con Portainer (Git repository)
+
+Lo stack è parametrizzato con variabili d'ambiente (vedi `stack.env`). Per deployarlo in Portainer:
+
+1. **Stacks → Add stack → Repository**.
+2. Repository URL: questo repo. Compose path: `docker-compose.yaml`.
+3. Nella sezione **Environment variables** incolla le variabili di `stack.env` e compila i valori reali:
+   - `MAIN_URL` / `FRONTEND_URL` / `NEXT_PUBLIC_BACKEND_URL` → il tuo dominio pubblico (NO slash finale; `NEXT_PUBLIC_BACKEND_URL` finisce con `/api`).
+   - `JWT_SECRET` → stringa random unica (`openssl rand -hex 32`).
+   - `POSTIZ_DB_USER` / `POSTIZ_DB_PASSWORD` / `POSTIZ_DB_NAME` → credenziali DB Postiz.
+   - `TEMPORAL_DB_USER` / `TEMPORAL_DB_PASSWORD` → credenziali DB Temporal.
+4. **Deploy the stack**.
+
+> **Nota:** con un dominio HTTPS serve un reverse proxy (Traefik / Nginx Proxy Manager) davanti alla porta `4007`, altrimenti login e OAuth non funzionano. Lo stack è pesante (Elasticsearch + 2 Postgres + Temporal): assicurati di avere RAM sufficiente.
