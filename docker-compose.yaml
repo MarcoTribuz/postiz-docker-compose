@@ -254,8 +254,9 @@ services:
       timeout: 5s
       retries: 10
       start_period: 30s
-    volumes:
-      - ./dynamicconfig:/etc/temporal/config/dynamicconfig
+    configs:
+      - source: temporal-dynamicconfig
+        target: /etc/temporal/config/dynamicconfig/development-sql.yaml
     labels:
       kompose.volume.type: configMap
 
@@ -313,6 +314,16 @@ volumes:
 
   temporal-elasticsearch-data:
     external: false
+
+configs:
+  temporal-dynamicconfig:
+    content: |
+      limit.maxIDLength:
+        - value: 255
+          constraints: {}
+      system.forceSearchAttributesCacheRefreshOnRead:
+        - value: true # Dev setup only. Please don't turn this on in production.
+          constraints: {}
 
 networks:
   postiz-network:
